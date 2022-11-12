@@ -4,7 +4,7 @@ from tkinter import ttk
 from suports import Suports
 from widgets import Widgets
 from graphs import Graphs
-from technique import Technique
+from technique import Technique, Technique2
 
 class Application(tk.Frame):
     def __init__(self, master: tk.Tk):
@@ -36,6 +36,10 @@ class Application(tk.Frame):
         self.graphs_pages.grid(row=0, column=0, sticky="nsew")
         
         self.technique_pages = Technique(self.mainframe)
+        self.pages.append(self.technique_pages)
+        self.technique_pages.grid(row=0, column=0, sticky="nsew")
+        
+        self.technique_pages = Technique2(self.mainframe)
         self.pages.append(self.technique_pages)
         self.technique_pages.grid(row=0, column=0, sticky="nsew")
         

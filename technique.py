@@ -10,6 +10,9 @@ class Technique(tk.Frame):
         self.handling_data_between_classes = HandlingDataBetweenClasses(self)
         self.handling_data_between_classes.pack()
         
+        self.handling_data_between_classes_event_generate = HandlingDataBetweenClassesWithEventGenerate(self)
+        self.handling_data_between_classes_event_generate.pack()
+        
         self.watching_text_editor = WatchingTextEditor(self)
         self.watching_text_editor.pack()
 
@@ -19,14 +22,14 @@ class HandlingDataBetweenClasses(tk.LabelFrame):
         
         # クラス間共通の変数を用意
         props = {}
-        class1 = Class1(self, props, text="Class1")
-        class1.grid(row=0, column=0, padx=10, pady=5)
-        class2 = Class2(self, props, text="Class2")
-        class2.grid(row=0, column=1, padx=10, pady=5)
-        # Class1のwidgetで実行したい関数をClass2から渡す
-        class1.button['command'] = class2.set_label
+        editor1 = Editor1(self, props, text="Editor1")
+        editor1.grid(row=0, column=0, padx=10, pady=5)
+        viewer1 = Viewer1(self, props, text="Viewer1")
+        viewer1.grid(row=0, column=1, padx=10, pady=5)
+        # Editor1のwidgetで実行したい関数をViewer1から渡す
+        editor1.button['command'] = viewer1.set_label
         
-class Class1(tk.LabelFrame):
+class Editor1(tk.LabelFrame):
     def __init__(self, master, props: dict, *args, **kargs):
         super().__init__(master, *args, **kargs)
         
@@ -42,7 +45,7 @@ class Class1(tk.LabelFrame):
         self.button = tk.Button(self, text="OK")
         self.button.pack(padx=10, pady=5)
         
-class Class2(tk.LabelFrame):
+class Viewer1(tk.LabelFrame):
     def __init__(self, master, props: dict, *args, **kargs):
         super().__init__(master, *args, **kargs)
         
@@ -60,6 +63,62 @@ class Class2(tk.LabelFrame):
         self.label2['text'] = self.props['var2'].get()
         self.label3['text'] = self.props['var3'].get()
         
+class HandlingDataBetweenClassesWithEventGenerate(tk.LabelFrame):
+    def __init__(self, master):
+        super().__init__(master, text="Handling data between classes with event generation")
+        
+        # クラス間共通の変数を用意
+        props = {}
+        editor1 = Editor2(self, props, text="Editor2")
+        editor1.grid(row=0, column=0, padx=10, pady=5)
+        viewer2 = Viewer2(self, props, text="Viewer2")
+        viewer2.grid(row=0, column=1, padx=10, pady=5)
+        
+class Editor2(tk.LabelFrame):
+    def __init__(self, master, props: dict, *args, **kargs):
+        super().__init__(master, *args, **kargs)
+        
+        props['var1'] = tk.StringVar()
+        props['var2'] = tk.StringVar()
+        props['var3'] = tk.StringVar()
+        self.entry1 = tk.Entry(self, textvariable=props['var1'])
+        self.entry1.pack(padx=10, pady=5)
+        self.entry2 = tk.Entry(self, textvariable=props['var2'])
+        self.entry2.pack(padx=10, pady=5)
+        self.entry3 = tk.Entry(self, textvariable=props['var3'])
+        self.entry3.pack(padx=10, pady=5)
+        self.button = tk.Button(self, 
+                                text="OK", 
+                                command=lambda: self.master.event_generate('<<Editor2Button>>'))
+        self.button.pack(padx=10, pady=5)
+        
+class Viewer2(tk.LabelFrame):
+    def __init__(self, master, props: dict, *args, **kargs):
+        super().__init__(master, *args, **kargs)
+        
+        self.props = props
+        
+        self.label1 = tk.Label(self, text='', width=20)
+        self.label1.pack()
+        self.label2 = tk.Label(self, text='', width=20)
+        self.label2.pack()
+        self.label3 = tk.Label(self, text='', width=20)
+        self.label3.pack()
+        
+        self.master.bind('<<Editor2Button>>', lambda _: self.set_label())
+        
+    def set_label(self):
+        self.label1['text'] = self.props['var1'].get()
+        self.label2['text'] = self.props['var2'].get()
+        self.label3['text'] = self.props['var3'].get()
+        
+class Technique2(tk.Frame):
+    def __init__(self, master):
+        super().__init__(master)
+        
+        self.watching_text_editor = WatchingTextEditor(self)
+        self.watching_text_editor.pack()
+
 class WatchingTextEditor(tk.LabelFrame):
     def __init__(self, master):
         super().__init__(master, text="Watching Text Editor")
