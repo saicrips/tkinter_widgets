@@ -62,8 +62,6 @@ class Suports(tk.Frame):
         self.clear_text_button.grid(row=1, column=2, padx=10, pady=5)
         self.scrolledtext_frame.grid(row=3, column=0, padx=10, pady=5, columnspan=2)
         
-        
-        
     def colorchooser(self):
         color = colorchooser.askcolor()
         self.colorchooser_label['text'] = color

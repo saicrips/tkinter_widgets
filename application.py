@@ -66,9 +66,9 @@ class PageManager(tk.Frame):
         self.pages[self.page_counter].tkraise()
     
     def back(self):
-        self.page_counter += 1
-        if self.page_counter >= self.page_length:
-            self.page_counter = 0
+        self.page_counter -= 1
+        if self.page_counter < 0:
+            self.page_counter = self.page_length - 1
         self.pages[self.page_counter].tkraise()
     
     def next(self):
