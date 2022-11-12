@@ -13,8 +13,8 @@ class Technique(tk.Frame):
         self.handling_data_between_classes_event_generate = HandlingDataBetweenClassesWithEventGenerate(self)
         self.handling_data_between_classes_event_generate.pack()
         
-        self.watching_text_editor = WatchingTextEditor(self)
-        self.watching_text_editor.pack()
+        self.handling_data_between_classes_clipboad = HandlingDataBetweenClassesWithClipboad(self)
+        self.handling_data_between_classes_clipboad.pack()
 
 class HandlingDataBetweenClasses(tk.LabelFrame):
     def __init__(self, master):
@@ -69,8 +69,8 @@ class HandlingDataBetweenClassesWithEventGenerate(tk.LabelFrame):
         
         # クラス間共通の変数を用意
         props = {}
-        editor1 = Editor2(self, props, text="Editor2")
-        editor1.grid(row=0, column=0, padx=10, pady=5)
+        editor2 = Editor2(self, props, text="Editor2")
+        editor2.grid(row=0, column=0, padx=10, pady=5)
         viewer2 = Viewer2(self, props, text="Viewer2")
         viewer2.grid(row=0, column=1, padx=10, pady=5)
         
@@ -111,6 +111,79 @@ class Viewer2(tk.LabelFrame):
         self.label1['text'] = self.props['var1'].get()
         self.label2['text'] = self.props['var2'].get()
         self.label3['text'] = self.props['var3'].get()
+        
+class HandlingDataBetweenClassesWithClipboad(tk.LabelFrame):
+    def __init__(self, master):
+        super().__init__(master, text="Handling data between classes with clipboad")
+        
+        editor3 = Editor3(self, text="Editor3")
+        editor3.grid(row=0, column=0, padx=10, pady=5)
+        viewer3 = Viewer3(self, text="Viewer3")
+        viewer3.grid(row=0, column=1, padx=10, pady=5)
+        
+def dict_to_string(variables: dict, additional_string: str) -> str:
+    for key, variable in variables.items():
+        if isinstance(variable, tk.Variable):
+            variables[key] = variable.get()
+    return str({'variables': variables, 'additional_string': additional_string})
+
+def string_to_dict(dict_string: str) -> dict:
+    import ast
+    output_dict = ast.literal_eval(dict_string)
+    return output_dict['variables'], output_dict['additional_string']
+        
+class Editor3(tk.LabelFrame):
+    def __init__(self, master, *args, **kargs):
+        super().__init__(master, *args, **kargs)
+        
+        self.variables = {}
+        self.variables['var1'] = tk.StringVar()
+        self.variables['var2'] = tk.StringVar()
+        self.variables['var3'] = tk.StringVar()
+        self.entry1 = tk.Entry(self, textvariable=self.variables['var1'])
+        self.entry1.pack(padx=10, pady=5)
+        self.entry2 = tk.Entry(self, textvariable=self.variables['var2'])
+        self.entry2.pack(padx=10, pady=5)
+        self.entry3 = tk.Entry(self, textvariable=self.variables['var3'])
+        self.entry3.pack(padx=10, pady=5)
+        self.button = tk.Button(self, 
+                                text="OK", 
+                                command=self.button_acction)
+        self.button.pack(padx=10, pady=5)
+        
+    def button_acction(self):
+        try:
+            post_clipboad_data = self.master.clipboard_get()
+        except:
+            # 画像のときエラーが発生するので、無視ししてクリップボードをクリア
+            post_clipboad_data = ""
+        finally:
+            self.master.clipboard_clear()
+        send_data = dict_to_string(self.variables, post_clipboad_data)
+        self.master.clipboard_append(send_data)
+        self.master.event_generate('<<Editor3Button>>')
+        
+class Viewer3(tk.LabelFrame):
+    def __init__(self, master, *args, **kargs):
+        super().__init__(master, *args, **kargs)
+        
+        self.label1 = tk.Label(self, text='', width=20)
+        self.label1.pack()
+        self.label2 = tk.Label(self, text='', width=20)
+        self.label2.pack()
+        self.label3 = tk.Label(self, text='', width=20)
+        self.label3.pack()
+        
+        self.master.bind('<<Editor3Button>>', lambda _: self.set_label())
+        
+    def set_label(self):
+        clipboad_string = self.master.clipboard_get()        
+        variables, post_clipboard_data = string_to_dict(clipboad_string)
+        self.master.clipboard_clear()
+        self.master.clipboard_append(post_clipboard_data)
+        self.label1['text'] = variables['var1']
+        self.label2['text'] = variables['var2']
+        self.label3['text'] = variables['var3']
         
 class Technique2(tk.Frame):
     def __init__(self, master):
