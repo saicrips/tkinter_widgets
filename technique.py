@@ -122,10 +122,11 @@ class HandlingDataBetweenClassesWithClipboad(tk.LabelFrame):
         viewer3.grid(row=0, column=1, padx=10, pady=5)
         
 def dict_to_string(variables: dict, additional_string: str) -> str:
+    output_dict = {}
     for key, variable in variables.items():
         if isinstance(variable, tk.Variable):
-            variables[key] = variable.get()
-    return str({'variables': variables, 'additional_string': additional_string})
+            output_dict[key] = variable.get()
+    return str({'variables': output_dict, 'additional_string': additional_string})
 
 def string_to_dict(dict_string: str) -> dict:
     import ast
