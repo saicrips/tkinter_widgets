@@ -5,7 +5,7 @@ from suports import Suports
 from widgets import Widgets
 from graphs import Graphs
 from technique import Technique, Technique2
-from canvas import Canvas
+from canvas import Canvas, Canvas2
 
 class Application(tk.Frame):
     def __init__(self, master: tk.Tk):
@@ -45,6 +45,10 @@ class Application(tk.Frame):
         self.technique_pages.grid(row=0, column=0, sticky="nsew")
         
         self.canvas_pages = Canvas(self.mainframe)
+        self.pages.append(self.canvas_pages)
+        self.canvas_pages.grid(row=0, column=0, sticky="nsew")
+        
+        self.canvas_pages = Canvas2(self.mainframe)
         self.pages.append(self.canvas_pages)
         self.canvas_pages.grid(row=0, column=0, sticky="nsew")
         
